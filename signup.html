@@ -18,12 +18,7 @@
       --gradient: linear-gradient(135deg, #7f5af0, #2cb67d);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Poppins", sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; }
 
     body {
       height: 100vh;
@@ -45,15 +40,9 @@
       animation: slideUp 0.5s ease;
     }
 
-    @keyframes slideUp {
-      0% { transform: translateY(50px); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
-    }
+    @keyframes slideUp { 0% { transform: translateY(50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 
-    .login-card h2 {
-      margin-bottom: 2rem;
-      color: var(--primary);
-    }
+    .login-card h2 { margin-bottom: 2rem; color: var(--primary); }
 
     .login-card input {
       width: 100%;
@@ -63,7 +52,15 @@
       border: 1px solid #ccc;
     }
 
-    .login-card button {
+    .login-card select {
+        width: 100%;
+        padding: 0.8rem;
+        margin-bottom: 1.2rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+
+    .login-card button.login-btn {
       width: 100%;
       padding: 0.9rem;
       background: var(--accent);
@@ -72,9 +69,10 @@
       font-weight: 600;
       cursor: pointer;
       transition: background 0.3s ease, color 0.3s ease;
+      margin-bottom: 1rem;
     }
 
-    .login-card button:hover {
+    .login-card button.login-btn:hover {
       background: var(--secondary);
       color: white;
     }
@@ -96,38 +94,25 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 0.8rem;
       box-shadow: 0 8px 20px rgba(0,0,0,0.15);
       transition: 0.3s;
       color: white;
-      background: var(--primary);
+      font-size: 0.95rem;
     }
 
-    .social-btn:hover {
-      background: var(--secondary);
-    }
+    .social-btn img { width: 20px; height: 20px; }
 
-    .login-footer {
-      margin-top: 1.5rem;
-      font-size: 0.9rem;
-      color: #555;
-    }
+    .social-btn:hover { opacity: 0.9; }
 
-    .login-footer a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-    }
+    .google-btn { background: #4285F4; }
+    .apple-btn { background: #000; }
 
-    .login-footer a:hover {
-      text-decoration: underline;
-    }
+    .login-footer { margin-top: 1.5rem; font-size: 0.9rem; color: #555; }
+    .login-footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .login-footer a:hover { text-decoration: underline; }
 
-    @media(max-width: 480px){
-      .login-card {
-        padding: 2rem 1.5rem;
-      }
-    }
+    @media(max-width: 480px){ .login-card { padding: 2rem 1.5rem; } }
 
     /* Home button */
     .home-btn {
@@ -145,30 +130,37 @@
 
   <div class="login-card">
     <h2>Arrive & Thrive UK</h2>
+    <input type="text" id="lastName" placeholder="Last Name" />
+    <input type="text" id="firstName" placeholder="First Name" />
+    <select type="text" id="gender" placeholder="Title" >
+        <option value="">Select Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+    </select>
+    <input type="tel" id="mobile" placeholder="Mobile/Whatsapp Number" />
     <input type="email" id="loginEmail" placeholder="Email" />
     <input type="password" id="loginPassword" placeholder="Password" />
-    <button id="submitLogin">Login</button>
+    <input type="password" id="loginPasswordRepeat" placeholder="Password" />
+    <button id="submitSignup" class="login-btn">Signup</button>
 
     <!-- Social login buttons -->
     <div class="social-buttons">
       <!-- Google -->
-      <div id="g_id_onload"
-           data-client_id="YOUR_GOOGLE_CLIENT_ID"
-           data-callback="handleCredentialResponse"
-           data-auto_prompt="false">
-      </div>
-      <div class="g_id_signin social-btn" style="background:#4285F4;">
-        <span>Sign in with Google</span>
-      </div>
+      <button class="social-btn google-btn" id="googleLogin">
+        <img src="https://raw.githubusercontent.com/encharm/Font-Awesome-SVG-PNG/master/black/svg/google.svg" alt="Google Logo" />
+        <span>Signup with Google</span>
+      </button>
 
       <!-- Apple -->
-      <button class="social-btn" id="appleLogin" style="background:#000;">
-        <span>Sign in with Apple</span>
+      <button class="social-btn apple-btn" id="appleLogin">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg" alt="Apple Logo" />
+        <span>Signup with Apple</span>
       </button>
     </div>
 
     <div class="login-footer">
-      <p>Don't have an account? <a href="#">Sign Up</a></p>
+      <p>Don't have an account? <a href="login.html">Back to Login</a></p>
     </div>
   </div>
 
@@ -176,13 +168,19 @@
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <script>
-    const submitLogin = document.getElementById("submitLogin");
-    submitLogin.addEventListener("click", async () => {
+    // Email/password login
+    const submitSignup = document.getElementById("submitSignup");
+    submitSignup.addEventListener("click", async () => {
+      const lastName = document.getElementById("lastName").value;
+      const firstName = document.getElementById("firstName").value;
+      const gender = document.getElementById("gender").value;
+      const mobile = document.getElementById("mobile").value;
       const email = document.getElementById("loginEmail").value;
       const password = document.getElementById("loginPassword").value;
+      const passwordRepear = document.getElementById("loginPasswordRepeat").value;
 
       try {
-        const response = await fetch("http://127.0.0.1:5001/v1/clients/login", {
+        const response = await fetch("http://127.0.0.1:5001/v1/clients/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password })
@@ -202,13 +200,22 @@
       }
     });
 
-    // Google OAuth callback
+    // Google login
+    const googleBtn = document.getElementById("googleLogin");
+    googleBtn.addEventListener("click", () => {
+      google.accounts.id.initialize({
+        client_id: "51595673494-835np21m5592cmh531gm3uu4cfgrlu6o.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+      });
+      google.accounts.id.prompt(); // shows popup
+    });
+
     function handleCredentialResponse(response) {
-      console.log("Google JWT ID token: " + response.credential);
-      fetch("http://127.0.0.1:5001/v1/clients/google-login", {
+      console.log("✅ Google JWT ID token received from browser:", response.credential);
+      fetch("http://127.0.0.1:5001/v1/clients/oauth_login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: response.credential })
+        body: JSON.stringify({ agent:'google', token: response.credential })
       })
       .then(res => res.json())
       .then(data => {
@@ -220,10 +227,11 @@
         }
       });
     }
-    window.handleCredentialResponse = handleCredentialResponse;
 
-    // Apple login button
-    document.getElementById("appleLogin").addEventListener("click", () => {
+    // Apple login
+    const appleBtn = document.getElementById("appleLogin");
+    appleBtn.addEventListener("click", () => {
+      // Redirect to backend endpoint that handles Apple OAuth
       window.location.href = "http://127.0.0.1:5001/v1/clients/apple-login";
     });
   </script>
