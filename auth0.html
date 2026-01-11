@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Arrive & Thrive UK | Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #7f5af0;
+      --secondary: #2cb67d;
+      --dark: #16161a;
+      --light: #fffffe;
+      --accent: #f9bc60;
+      --gradient: linear-gradient(135deg, #7f5af0, #2cb67d);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: var(--gradient);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--dark);
+    }
+
+    .login-card {
+      background: rgba(255,255,255,0.95);
+      padding: 3rem 2rem;
+      border-radius: 20px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+      0% { transform: translateY(50px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .login-card h2 {
+      margin-bottom: 2rem;
+      color: var(--primary);
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1.2rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .login-card button {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--accent);
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .login-card button:hover {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .social-buttons {
+      margin: 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .social-btn {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      transition: 0.3s;
+      color: white;
+      background: var(--primary);
+    }
+
+    .social-btn:hover {
+      background: var(--secondary);
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .login-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media(max-width: 480px){
+      .login-card {
+        padding: 2rem 1.5rem;
+      }
+    }
+
+    /* Home button */
+    .home-btn {
+      position:absolute; top:20px; left:20px; background: var(--light); 
+      padding:0.5rem 1rem; border-radius: 8px; color: var(--primary); 
+      font-weight:600; text-decoration:none; box-shadow:0 5px 15px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Home button -->
+  <a href="index.html" class="home-btn">Home</a>
+
+  <div class="login-card">
+    <h2>Arrive & Thrive UK</h2>
+    <input type="email" id="loginEmail" placeholder="Email" />
+    <input type="password" id="loginPassword" placeholder="Password" />
+    <button id="submitLogin">Login</button>
+
+    <!-- Social login buttons -->
+    <div class="social-buttons">
+      <!-- Google -->
+      <div id="g_id_onload"
+           data-client_id="YOUR_GOOGLE_CLIENT_ID"
+           data-callback="handleCredentialResponse"
+           data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin social-btn" style="background:#4285F4;">
+        <span>Sign in with Google</span>
+      </div>
+
+      <!-- Apple -->
+      <button class="social-btn" id="appleLogin" style="background:#000;">
+        <span>Sign in with Apple</span>
+      </button>
+    </div>
+
+    <div class="login-footer">
+      <p>Don't have an account? <a href="#">Sign Up</a></p>
+    </div>
+  </div>
+
+  <!-- Load Google Identity Services SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+    const submitLogin = document.getElementById("submitLogin");
+    submitLogin.addEventListener("click", async () => {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      try {
+        const response = await fetch("http://127.0.0.1:5001/v1/clients/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+
+        if (data.logged_in) {
+          localStorage.setItem("sessionToken", data.sessionToken || "");
+          window.location.href = "dashboard.html";
+        } else {
+          alert(data.message || "Login failed");
+        }
+
+      } catch (err) {
+        alert("Server error");
+        console.error(err);
+      }
+    });
+
+    // Google OAuth callback
+    function handleCredentialResponse(response) {
+      console.log("Google JWT ID token: " + response.credential);
+      fetch("http://127.0.0.1:5001/v1/clients/google-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: response.credential })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.logged_in){
+          localStorage.setItem("sessionToken", data.sessionToken || "");
+          window.location.href = "dashboard.html";
+        } else {
+          alert("Google login failed");
+        }
+      });
+    }
+    window.handleCredentialResponse = handleCredentialResponse;
+
+    // Apple login button
+    document.getElementById("appleLogin").addEventListener("click", () => {
+      window.location.href = "http://127.0.0.1:5001/v1/clients/apple-login";
+    });
+  </script>
+</body>
+</html>
