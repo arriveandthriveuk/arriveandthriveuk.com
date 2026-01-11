@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Arrive & Thrive UK | Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #7f5af0;
+      --secondary: #2cb67d;
+      --accent: #f9bc60;
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --dark: #16161a;
+      --light: #fffffe;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; }
+
+    body { background: var(--bg); color: var(--dark); }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 { font-size: 1.8rem; font-weight: 700; }
+
+    header nav a {
+      color: white;
+      margin-left: 1.5rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    header nav a:hover { text-decoration: underline; }
+
+    .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+
+    .welcome { text-align: center; margin-bottom: 2rem; }
+
+    .welcome h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .welcome p { font-size: 1.1rem; color: #555; }
+
+    /* Summary cards */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+    .card {
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+      text-align: center;
+    }
+    .card:hover { transform: translateY(-8px); }
+
+    .card h3 { margin-bottom: 1rem; font-size: 1.4rem; color: var(--primary); }
+    .card p { font-size: 1.1rem; font-weight: 600; }
+
+    /* Orders table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 3rem;
+    }
+    table th, table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    table th { background: var(--primary); color: white; border-bottom: 2px solid #444; }
+    table tr:hover { background: #f0f0f0; }
+
+    /* Profile section */
+    .profile {
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+    .profile h3 { margin-bottom: 0.5rem; }
+    .profile button {
+      margin-top: 1rem;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 30px;
+      background: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .profile button:hover { background: var(--secondary); color: white; }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: #0f0f17;
+      color: white;
+      margin-top: 4rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Arrive & Thrive UK</h1>
+  <nav>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/">Home</a>
+    <a href="#" id="logoutBtn">Logout</a>
+  </nav>
+</header>
+
+<div class="container">
+
+  <div class="welcome">
+    <h2>Welcome back, <span id="username">User</span> 👋</h2>
+    <p>Here’s a summary of your orders and upcoming services.</p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="cards">
+    <div class="card">
+      <h3>Total Orders</h3>
+      <p id="totalOrders">0</p>
+    </div>
+    <div class="card">
+      <h3>Upcoming Services</h3>
+      <p id="upcomingServices">0</p>
+    </div>
+    <div class="card">
+      <h3>Membership Level</h3>
+      <p id="membershipLevel">Standard</p>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <h3 style="margin-bottom:1rem;">Previous Orders</h3>
+  <table id="ordersTable">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Service</th>
+        <th>Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Orders will be dynamically injected here -->
+    </tbody>
+  </table>
+
+  <!-- Profile Section -->
+  <div class="profile">
+    <h3>Profile</h3>
+    <p>Email: <span id="userEmail">user@example.com</span></p>
+    <button id="editProfileBtn">Edit Profile</button>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 Arrive & Thrive UK. All rights reserved.</p>
+</footer>
+
+<script>
+  // ==============================
+  // DEMO DATA (replace with Flask backend fetch)
+  // ==============================
+  const userData2 = {
+    name: "Alex Morgan",
+    email: "alex@example.com",
+    membership: "Premium",
+    totalOrders: 8,
+    upcomingServices: 2,
+    orders: [
+      { id: "ORD001", service: "Airport Pickup", date: "2026-01-10", status: "Completed" },
+      { id: "ORD002", service: "Apartment Viewing", date: "2026-01-12", status: "Completed" },
+      { id: "ORD003", service: "Utility Setup", date: "2026-01-15", status: "Pending" }
+    ]
+  };
+
+  
+
+  // Populate dashboard
+  //document.getElementById("username").innerText = userData.name;
+  //document.getElementById("userEmail").innerText = userData.email;
+  //document.getElementById("membershipLevel").innerText = userData.membership;
+  //document.getElementById("totalOrders").innerText = userData.totalOrders;
+  //document.getElementById("upcomingServices").innerText = userData.upcomingServices;
+
+  //const ordersTableBody = document.getElementById("ordersTable").querySelector("tbody");
+  //userData.orders.forEach(order => {
+    //const row = document.createElement("tr");
+    //row.innerHTML = `<td>${order.id}</td><td>${order.service}</td><td>${order.date}</td><td>${order.status}</td>`;
+    //ordersTableBody.appendChild(row);
+  //});
+
+
+  async function populateDashboard() {
+    try {
+        const sessionToken = localStorage.getItem("sessionToken");
+        const res = await fetch("http://127.0.0.1:5001/v1/clients/me", {
+            //credentials: "include" // 🔥 send session cookie
+            
+            headers: {
+                "Authorization": `Bearer ${sessionToken}`
+            }
+      });
+  
+      if (!res.ok) {
+        // User not logged in
+        //window.location.href = "index.html";
+        alert("Sesssion expired!");
+        return;
+      }
+  
+      const userData = await res.json();
+  
+      // Populate dashboard
+        document.getElementById("username").innerText = userData.name;
+        document.getElementById("userEmail").innerText = userData.email;
+        document.getElementById("membershipLevel").innerText = userData.membership;
+        document.getElementById("totalOrders").innerText = userData.totalOrders;
+        document.getElementById("upcomingServices").innerText = userData.upcomingServices;
+
+        const ordersTableBody = document.getElementById("ordersTable").querySelector("tbody");
+        userData.orders.forEach(order => {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>${order.id}</td><td>${order.service}</td><td>${order.date}</td><td>${order.status}</td>`;
+            ordersTableBody.appendChild(row);
+        });
+  
+      // Show dashboard
+      //document.getElementById("dashboard").style.display = "block";
+  
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+      alert("Unable to load dashboard. Please log in again.");
+      window.location.href = "index.html";
+    }
+  }
+  
+  // Call this function when the page loads
+  document.addEventListener("DOMContentLoaded", populateDashboard);
+  
+
+  
+  
+  
+  
+  // Logout button demo
+  //const logoutBtn = document.getElementById("logoutBtn");
+
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+  try {
+    const res = await fetch("http://127.0.0.1:5001/v1/clients/logout", {
+      method: "POST",
+      credentials: "include", // Important: sends session cookie
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Logged out successfully!");
+      window.location.href = "index.html"; // redirect to homepage/login
+    } else {
+      alert("Logout failed. Please try again.");
+    }
+  } catch (err) {
+    console.error("Logout error:", err);
+    alert("Something went wrong. Please try again.");
+  }
+});
+
+  // Edit Profile demo
+  document.getElementById("editProfileBtn").addEventListener("click", () => {
+    alert("Edit profile modal / page here!");
+  });
+</script>
+
+</body>
+</html>
